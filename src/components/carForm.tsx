@@ -2,7 +2,9 @@ import { ChangeEvent, FormEvent, useState } from 'react'
 import { Car } from '../types'
 import './carForm.css'
 
-export default function CarForm({ cars, setCars} : { cars: Car[], setCars: (cars: Car[]) => void}){
+interface CarFormProps { cars: Car[], setCars: (cars: Car[]) => void }
+
+export default function CarForm({ cars, setCars} : CarFormProps){
     const [car, setCar] = useState({ maker: '', model: '', year: '' }) // Car object state
     const [errors, setErrors] = useState<string[]>([]) // Errors state
 
@@ -32,9 +34,14 @@ export default function CarForm({ cars, setCars} : { cars: Car[], setCars: (cars
         setCar({ maker: '', model: '', year: '' })
     }
 
+    const handleReset = () => { // Handler for form reset
+        setCar({ maker: '', model: '', year: '' })
+        setErrors([])
+    }
+
     
     return (
-        <form className='car-form' onSubmit={handleSubmit}>
+        <form className='car-form' onReset={handleReset} onSubmit={handleSubmit}>
             
             <input
                 type="text"
@@ -64,6 +71,7 @@ export default function CarForm({ cars, setCars} : { cars: Car[], setCars: (cars
                 <option value="Ford">Ford</option>
             </select>
             <p className='error'>{errors[0]}</p>
+            <button type="reset">Clear</button>
             <button type="submit">Add Car</button>
         </form>
     )
