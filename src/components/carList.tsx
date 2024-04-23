@@ -15,8 +15,7 @@ export default function CarList({ cars, setCars } : { cars: Car[], setCars: (car
 
     return (
         <ul className='car-list'>
-            {cars.map((car, i) => {
-                return (
+            {cars.map((car, i) => (
                 <li id={`car-list-${i}`} key={i}>
                     <div>
                         <p>Maker: {car.maker}</p>
@@ -25,8 +24,7 @@ export default function CarList({ cars, setCars } : { cars: Car[], setCars: (car
                     </div>
                     <button onClick={() => {deleteCar(i)}}>Delete</button>
                 </li>
-            )
-            })}
+            ))}
         </ul>
     )
 }
