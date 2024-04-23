@@ -3,18 +3,30 @@ import { Car } from '../types'
 import './carForm.css'
 
 interface CarFormProps { cars: Car[], setCars: (cars: Car[]) => void }
+interface FormErrors extends Car {}
+
+function capitalizeFirstLetter(string: string) { // Function to capitalize the first letter of a string
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
 
 export default function CarForm({ cars, setCars} : CarFormProps){
     const [car, setCar] = useState({ maker: '', model: '', year: '' }) // Car object state
-    const [errors, setErrors] = useState<string[]>([]) // Errors state
+    const [errors, setErrors] = useState<FormErrors>({
+        model: '', year: '', maker: ''
+    }) // Errors state
 
     const validate = () => { // Function to validate form fields
-        const errors = []
-        if (car.model === '') errors.push('Model is required')
-        if (car.year === '') errors.push('Year is required')
-        if (car.maker === '') errors.push('Maker is required')
-        setErrors(errors)
-        return errors.length === 0
+        let correct = true
+        Object.keys(errors).forEach((key) => {
+            if (!car[key as keyof Car]) {
+                errors[key as keyof Car] = `${capitalizeFirstLetter(key)} is required`
+                correct = false
+            } else {
+                errors[key as keyof Car] = ''
+            }
+        })
+        setErrors({ ...errors })
+        return correct
     }
     
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => { // Handler for input changes
@@ -36,7 +48,7 @@ export default function CarForm({ cars, setCars} : CarFormProps){
 
     const handleReset = () => { // Handler for form reset
         setCar({ maker: '', model: '', year: '' })
-        setErrors([])
+        setErrors({ model: '', year: '', maker: ''})
     }
 
     
@@ -50,7 +62,7 @@ export default function CarForm({ cars, setCars} : CarFormProps){
                 onChange={handleChange}
                 placeholder="Model"
             />
-            <p className='error'>{errors[2]}</p>
+            <p className='error'>{errors.model}</p>
             <input
                 type="number"
                 min={1900}
@@ -63,14 +75,14 @@ export default function CarForm({ cars, setCars} : CarFormProps){
                 onChange={handleChange}
                 placeholder="Year"
             />
-            <p className='error'>{errors[1]}</p>
+            <p className='error'>{errors.year}</p>
             <select name="maker" value={car.maker} onChange={handleSelectChange}>
                 <option value="">Select Maker</option>
                 <option value="Toyota">Toyota</option>
                 <option value="Honda">Honda</option>
                 <option value="Ford">Ford</option>
             </select>
-            <p className='error'>{errors[0]}</p>
+            <p className='error'>{errors.maker}</p>
             <button type="reset">Clear</button>
             <button type="submit">Add Car</button>
         </form>
