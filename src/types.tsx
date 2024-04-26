@@ -5,3 +5,5 @@ export interface Car { // Car object fields
 }
 
 export interface FormErrors extends Car {}
+
+export const emptyCar: Car = { maker: '', model: '', year: '' } // Empty car object
