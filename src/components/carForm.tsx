@@ -1,6 +1,9 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { Car } from '../types'
-import './carForm.css'
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
+import { Button, ButtonGroup, MenuItem } from '@mui/material';
 
 interface CarFormProps { cars: Car[], setCars: (cars: Car[]) => void }
 interface FormErrors extends Car {}
@@ -34,10 +37,10 @@ export default function CarForm({ cars, setCars} : CarFormProps){
         setCar({ ...car, [name]: value })
     }
 
-    const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => { // Handler for select changes
-        const { name, value } = e.target
-        setCar({ ...car, [name]: value })
-    }
+    // const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => { // Handler for select changes
+    //     const { name, value } = e.target
+    //     setCar({ ...car, [name]: value })
+    // }
     
     const handleSubmit = (e: FormEvent) => { // Handler for form submission
         e.preventDefault()
@@ -53,38 +56,46 @@ export default function CarForm({ cars, setCars} : CarFormProps){
 
     
     return (
-        <form className='car-form' onReset={handleReset} onSubmit={handleSubmit}>
+        <Card>
+            <CardContent sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <h2>Add Car</h2>
             
-            <input
-                type="text"
-                name="model"
-                value={car.model}
-                onChange={handleChange}
-                placeholder="Model"
-            />
-            <p className='error'>{errors.model}</p>
-            <input
-                type="number"
-                min={1900}
-                max={2024}
-                minLength={4}
-                maxLength={4}
-                name="year"
-                defaultValue={2000}
-                value={car.year}
-                onChange={handleChange}
-                placeholder="Year"
-            />
-            <p className='error'>{errors.year}</p>
-            <select name="maker" value={car.maker} onChange={handleSelectChange}>
-                <option value="">Select Maker</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Honda">Honda</option>
-                <option value="Ford">Ford</option>
-            </select>
-            <p className='error'>{errors.maker}</p>
-            <button type="reset">Clear</button>
-            <button type="submit">Add Car</button>
-        </form>
+                <TextField
+                    required
+                    type="outlined"
+                    name='model'
+                    value={car.model}
+                    onChange={handleChange}
+                    label="Model"
+                />
+                <p className='error'>{errors.model}</p>
+                <TextField
+                    required
+                    type="outlined"
+                    name='year'
+                    value={car.year}
+                    onChange={handleChange}
+                    label="Year"
+                />
+                <p className='error'>{errors.year}</p>
+                <TextField 
+                    sx={{ width: '100%' }} 
+                    label="Maker" 
+                    name='maker' 
+                    select 
+                    required
+                    value={car.maker} 
+                    onChange={handleChange} >
+                        <MenuItem value="Toyota">Toyota</MenuItem>
+                        <MenuItem value="Honda">Honda</MenuItem>
+                        <MenuItem value="Ford">Ford</MenuItem>
+                </TextField>
+                <p className='error'>{errors.maker}</p>
+                <ButtonGroup>
+                    <Button variant='outlined' onClick={handleReset}>Clear</Button>
+                    <Button variant='contained' onClick={handleSubmit}>Add Car</Button>
+                </ButtonGroup>
+            </CardContent>
+        </Card>
     )
 }
