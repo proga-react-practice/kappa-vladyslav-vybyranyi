@@ -3,3 +3,5 @@ export interface Car { // Car object fields
     model: string
     year: string
 }
+
+export interface FormErrors extends Car {}

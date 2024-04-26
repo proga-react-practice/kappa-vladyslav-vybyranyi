@@ -1,9 +1,16 @@
-import { Button, Card, CardContent, Container, Box, List, ListItem, Slide } from '@mui/material'
+import { Button, Card, CardContent, Container, Box, List, ListItem, Slide, Typography, ButtonGroup } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { Car } from '../types'
 import { useEffect, useState } from 'react';
 
-export default function CarList({ cars, setCars } : { cars: Car[], setCars: (cars: Car[]) => void}) {
+interface CarListProps {
+    cars: Car[],
+    deleteCar: (i: number) => void
+    editCar: (i: number) => void
+}
+
+export default function CarList({ cars, deleteCar, editCar } : CarListProps) {
 
     const [visibleCars, setVisibleCars] = useState<boolean[]>(cars.map(() => true))
 
@@ -11,14 +18,16 @@ export default function CarList({ cars, setCars } : { cars: Car[], setCars: (car
         setVisibleCars(cars.map(() => true))
     }, [cars])
 
-    const deleteCar = (i : number) => { // Function to delete a car from the list
+    const handleDelete = (i : number) => { // Function to animate car deletion from the list
         setVisibleCars(visibleCars.map((_, index) => index === i ? false : true))
         
         setTimeout(() => {
-            const newCars = [...cars]
-            newCars.splice(i, 1)
-            setCars(newCars)
+            deleteCar(i)
         }, 500)
+    }
+
+    const handleEdit = (i : number) => { // Function to animate car edition from the list
+        editCar(i)
     }
 
     return (
@@ -33,11 +42,14 @@ export default function CarList({ cars, setCars } : { cars: Car[], setCars: (car
                             <CardContent>
                                 <Box display='flex'>
                                     <Container>
-                                        <p><b>Maker: </b>{car.maker}</p>
-                                        <p><b>Model: </b> {car.model}</p>
-                                        <p><b>Year: </b> {car.year}</p>
+                                        <Typography><b>Maker: </b>{car.maker}</Typography>
+                                        <Typography><b>Model: </b> {car.model}</Typography>
+                                        <Typography><b>Year: </b> {car.year}</Typography>
                                     </Container>
-                                    <Button variant='outlined' color='error' onClick={() => {deleteCar(i)}}><DeleteIcon /></Button>
+                                    <ButtonGroup orientation='vertical'>
+                                        <Button variant='outlined' color='warning' onClick={() => {handleEdit(i)}}><EditIcon /></Button>
+                                        <Button variant='outlined' color='error' onClick={() => {handleDelete(i)}}><DeleteIcon /></Button>
+                                    </ButtonGroup>
                                 </Box>
                             </CardContent>
                         </Card>

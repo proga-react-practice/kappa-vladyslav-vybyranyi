@@ -1,0 +1,87 @@
+
+import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, MenuItem } from '@mui/material';
+import { ChangeEvent, useState, useEffect } from 'react';
+import { Car, FormErrors } from '../types';
+import { validateCar } from '../utils';
+
+interface CarEditDialogProps {
+    open: boolean,
+    handleClose: () => void,
+    editCar: (car: Car) => void,
+    carData: Car
+}
+
+export default function CarEditDialog({open, handleClose, editCar, carData} : CarEditDialogProps){
+
+    const [car, setCar] = useState<Car>({ maker: '', model: '', year: '' })
+    const [errors, setErrors] = useState<FormErrors>({ maker: '', model: '', year: '' })
+
+    useEffect(() => {
+        setCar(carData === undefined ? { maker: '', model: '', year: '' } : carData)
+    }, [carData])
+
+    useEffect(() => { // Effect to re-validate form fields
+        if (Object.values(errors).some((value) => value !== '')){
+            validateCar({car, errors, setErrors})
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [car])
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setCar({ ...car, [name]: value })
+    }
+
+    const handleSubmit = () => {
+        if (!validateCar({car, errors, setErrors})) return
+        editCar(car)
+        handleClose()
+    }
+
+    return (
+        <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Edit Car</DialogTitle>
+            <DialogContent>
+                <TextField
+                    sx={{marginY: 1}}
+                    label='Maker'
+                    name='maker'
+                    select
+                    value={car.maker}
+                    onChange={handleChange}
+                    error={errors.maker !== ''}
+                    helperText={errors.maker}
+                    fullWidth>
+                        <MenuItem value="">Select Maker</MenuItem>
+                        <MenuItem value="Toyota">Toyota</MenuItem>
+                        <MenuItem value="Honda">Honda</MenuItem>
+                        <MenuItem value="Ford">Ford</MenuItem>
+                </TextField>
+                <TextField
+                    sx={{marginY: 1}}
+                    label='Model'
+                    name='model'
+                    value={car.model}
+                    onChange={handleChange}
+                    error={errors.model !== ''}
+                    helperText={errors.model}
+                    fullWidth
+                />
+                <TextField
+                    sx={{marginY: 1}}
+                    label='Year'
+                    name='year'
+                    value={car.year}
+                    onChange={handleChange}
+                    error={errors.year !== ''}
+                    helperText={errors.year}
+                    fullWidth
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={handleSubmit}>Save</Button>
+            </DialogActions>
+        </Dialog>
+    )
+}
