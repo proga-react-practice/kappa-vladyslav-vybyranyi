@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { Car, FormErrors } from '../types'
+import { Car, FormErrors, emptyCar } from '../types'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import TextField from '@mui/material/TextField';
@@ -10,10 +10,8 @@ import { validateCar } from '../utils'
 interface CarFormProps { addCar: (car: Car) => void }
 
 export default function CarForm({ addCar } : CarFormProps){
-    const [car, setCar] = useState({ maker: '', model: '', year: '' }) // Car object state
-    const [errors, setErrors] = useState<FormErrors>({
-        model: '', year: '', maker: ''
-    }) // Errors state
+    const [car, setCar] = useState(emptyCar) // Car object state
+    const [errors, setErrors] = useState<FormErrors>(emptyCar) // Errors state
 
     useEffect(() => { // Effect to re-validate form fields
         if (Object.values(errors).some((value) => value !== '')){
@@ -31,11 +29,11 @@ export default function CarForm({ addCar } : CarFormProps){
         e.preventDefault()
         if (!validateCar({car, errors, setErrors})) return
         addCar(car)
-        setCar({ maker: '', model: '', year: '' })
+        setCar(emptyCar)
     }
 
     const handleReset = () => { // Handler for form reset
-        setCar({ maker: '', model: '', year: '' })
+        setCar(emptyCar)
         setErrors({ model: '', year: '', maker: ''})
     }
 

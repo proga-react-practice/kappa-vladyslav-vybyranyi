@@ -1,7 +1,7 @@
 
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, MenuItem } from '@mui/material';
 import { ChangeEvent, useState, useEffect } from 'react';
-import { Car, FormErrors } from '../types';
+import { Car, FormErrors, emptyCar } from '../types';
 import { validateCar } from '../utils';
 
 interface CarEditDialogProps {
@@ -13,11 +13,11 @@ interface CarEditDialogProps {
 
 export default function CarEditDialog({open, handleClose, editCar, carData} : CarEditDialogProps){
 
-    const [car, setCar] = useState<Car>({ maker: '', model: '', year: '' })
-    const [errors, setErrors] = useState<FormErrors>({ maker: '', model: '', year: '' })
+    const [car, setCar] = useState<Car>(emptyCar)
+    const [errors, setErrors] = useState<FormErrors>(emptyCar)
 
     useEffect(() => {
-        setCar(carData === undefined ? { maker: '', model: '', year: '' } : carData)
+        setCar(carData === undefined ? emptyCar : carData)
     }, [carData])
 
     useEffect(() => { // Effect to re-validate form fields
