@@ -9,11 +9,21 @@ const lightTheme = createTheme({
 		primary: {
 			main: '#7c3aed'
 		},
+		secondary: {
+			main: '#9333ea'
+		},
 	},
 	components: {
 		MuiButton: {
 			styleOverrides: {
 				root: {
+					borderRadius: 10
+				}
+			}
+		},
+		MuiDialog: {
+			styleOverrides: {
+				paper: {
 					borderRadius: 10
 				}
 			}
@@ -48,6 +58,13 @@ components: {
 			}
 		}
 	},
+	MuiDialog: {
+		styleOverrides: {
+			paper: {
+				borderRadius: 0
+			}
+		}
+	},
 	MuiCard: {
 		styleOverrides: {
 			root: {
@@ -64,11 +81,21 @@ const darkTheme = createTheme({
 		primary: {
 			main: '#7c3aed'
 		},
+		secondary: {
+			main: '#6b21a8'
+		},
 	},
 	components: {
 		MuiButton: {
 			styleOverrides: {
 				root: {
+					borderRadius: 10
+				}
+			}
+		},
+		MuiDialog: {
+			styleOverrides: {
+				paper: {
 					borderRadius: 10
 				}
 			}
@@ -100,6 +127,13 @@ const solarizedDark = createTheme({
 		MuiButton: {
 			styleOverrides: {
 				root: {
+					borderRadius: 0
+				}
+			}
+		},
+		MuiDialog: {
+			styleOverrides: {
+				paper: {
 					borderRadius: 0
 				}
 			}
