@@ -12,10 +12,11 @@ import TimelineDot from '@mui/lab/TimelineDot';
 
 interface CarHistoryProps {
     history: Car[][],
-    revertTo: (index: number) => void
+    revertTo: (index: number) => void,
+    currentIndex: number
 }
 
-export default function CarHistory({history, revertTo} : CarHistoryProps){
+export default function CarHistory({history, revertTo, currentIndex} : CarHistoryProps){
     const [open, setOpen] = useState(false)
 
     const handleClose = () => {
@@ -32,7 +33,7 @@ export default function CarHistory({history, revertTo} : CarHistoryProps){
                         {history.map((cars, i) => (
                             <TimelineItem key={i}>
                                 <TimelineSeparator>
-                                    <TimelineDot color='primary' />
+                                    <TimelineDot color={i === currentIndex ? 'primary' : 'secondary'} />
                                     {i !== history.length - 1 && <TimelineConnector sx={{ backgroundColor:'secondary.main' }} />}
                                 </TimelineSeparator>
                                 <TimelineContent>

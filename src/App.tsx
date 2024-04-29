@@ -13,7 +13,8 @@ function App() {
 	const { state : cars, 
 					setValue : setCars, 
 					revertTo : revertCommit, 
-					history : commitHistory } = VCV<Car[]>([]) // Car array state
+					history : commitHistory,
+					index: commitIndex } = VCV<Car[]>([]) // Car array state
 	const [themeIndex, setThemeIndex] = useState(0)
 	const [editDialogOpen, setEditDialogOpen] = useState(false)
 	const [editIndex, setEditIndex] = useState(-1)
@@ -49,6 +50,7 @@ function App() {
 						{cars.length !== 0 && <Divider orientation='vertical' flexItem variant='middle' sx={{m: 2}} />}
 						<Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'end'}}>
 							<CarHistory 
+								currentIndex={commitIndex}
 								history={commitHistory} 
 								revertTo={revertCommit}/>
 							<CarList cars={cars} deleteCar={deleteCar} editCar={handleEdit} />

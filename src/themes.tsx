@@ -10,7 +10,7 @@ const lightTheme = createTheme({
 			main: '#7c3aed'
 		},
 		secondary: {
-			main: '#9333ea'
+			main: '#a78bfa'
 		},
 	},
 	components: {
@@ -82,7 +82,7 @@ const darkTheme = createTheme({
 			main: '#7c3aed'
 		},
 		secondary: {
-			main: '#6b21a8'
+			main: '#a78bfa'
 		},
 	},
 	components: {
