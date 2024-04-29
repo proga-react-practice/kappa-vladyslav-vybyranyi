@@ -40,7 +40,7 @@ export default function CarHistory({history, revertTo} : CarHistoryProps){
                                         <Typography>Commit {i}</Typography>
                                     </Button>
                                     <SimpleTreeView>
-                                        <TreeItem label='Cars' itemId='main'>
+                                        <TreeItem label={`Cars (${cars.length})`} itemId='main'>
                                             {cars.map((car, j) => (
                                                 <TreeItem key={j} itemId={j.toString()} label={car.model}>
                                                     <Typography><b>Model:</b> {car.model}</Typography>

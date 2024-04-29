@@ -84,9 +84,6 @@ function applyDiff( str: string, diff: Diff ) : string {
         result += str.slice(offset, diff.removed[i].index)
         offset = diff.removed[i].index+diff.removed[i].str.length
     }
-    console.log('str', str)
-    console.log('result', result)
-    console.log('diff', diff)
     result += str.slice(offset)
     offset = 0
     for (let i = 0; i < diff.added.length; i++){
@@ -94,6 +91,7 @@ function applyDiff( str: string, diff: Diff ) : string {
     }
     return result
 }
+
 
 // Hook for version control variable
 export default function VCV<T>(value : T){
@@ -121,19 +119,16 @@ export default function VCV<T>(value : T){
     }
 
     useEffect(() => {
-        console.log('history', history)
+        history
     }, [history])
 
     useEffect(() => {
-        
-        console.log('index', index)
-        const temp_history = history.slice(0, index+1)
-        console.log('temp_history1', temp_history)
+        console.log('diffs', diffs)
+        const temp_history = history.slice(0, index !== 0 ? index : 1)
+        console.log('temp_history', temp_history)
         const temp_diffs = diffs.slice(index-1)
-        console.log('temp_diffs', temp_diffs)
         temp_diffs.forEach((diff) => {
             temp_history.push(JSON.parse(applyDiff(JSON.stringify(temp_history[temp_history.length - 1]), diff)) as T)
-            console.log('temp_history2', temp_history)
         })
 
         setHistory(temp_history)
@@ -146,11 +141,18 @@ export default function VCV<T>(value : T){
     }, [diffs] )
 
     function setValue(value : T){
-        if (index !== history.length - 1){
-            setDiffs(diffs.slice(0, index + 1))
-            setHistory(history.slice(0, index + 1))
+        // if (index !== history.length - 1){
+        //     setDiffs(diffs.slice(0, index + 1))
+        //     setHistory(history.slice(0, index + 1))
+        // }
+        console.log('index', index)
+        if (index === 0){
+            setDiffs([calculateDiff(JSON.stringify(history[index]), JSON.stringify(value)), ...diffs.slice(index)])
+        }else if (index === history.length - 1){
+            setDiffs([...diffs, calculateDiff(JSON.stringify(history[index]), JSON.stringify(value))])
+        }else{
+            setDiffs([...diffs.slice(0, index), calculateDiff(JSON.stringify(history[index]), JSON.stringify(value)), ...diffs.slice(index)])
         }
-        setDiffs([...diffs.splice(0, index + 1), calculateDiff(JSON.stringify(history[index]), JSON.stringify(value)), ...diffs.slice(index + 1)])
         
         setIndex(index + 1)
         setState(value)
