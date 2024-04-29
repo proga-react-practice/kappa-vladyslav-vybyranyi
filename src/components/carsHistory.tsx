@@ -47,6 +47,7 @@ export default function CarHistory({history, revertTo, currentIndex} : CarHistor
                                                     <Typography><b>Model:</b> {car.model}</Typography>
                                                     <Typography><b>Maker:</b> {car.maker}</Typography>
                                                     <Typography><b>Year:</b> {car.year}</Typography>
+                                                    <Typography><b>Engine:</b> {car.engine}</Typography>
                                                 </TreeItem>
                                             ))}
                                         </TreeItem>

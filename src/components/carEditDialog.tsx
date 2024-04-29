@@ -1,5 +1,5 @@
 
-import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, MenuItem } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, MenuItem, FormControl, FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/material';
 import { ChangeEvent, useState, useEffect } from 'react';
 import { Car, FormErrors, emptyCar } from '../types';
 import { validateCar } from '../utils';
@@ -77,6 +77,20 @@ export default function CarEditDialog({open, handleClose, editCar, carData} : Ca
                     helperText={errors.year}
                     fullWidth
                 />
+                <FormControl required component="fieldset" error={Boolean(errors.engine)}>
+                    <FormLabel component="legend">Engine Type</FormLabel>
+                    <RadioGroup 
+                        row
+                        aria-label="engine" 
+                        name="engine" 
+                        value={car.engine} 
+                        onChange={handleChange}>
+                        <FormControlLabel value="Petrol" control={<Radio />} label="Petrol" />
+                        <FormControlLabel value="Diesel" control={<Radio />} label="Diesel" />
+                        <FormControlLabel value="Electric" control={<Radio />} label="Electric" />
+                    </RadioGroup>
+                    <FormHelperText>{errors.engine}</FormHelperText>
+                </FormControl>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>

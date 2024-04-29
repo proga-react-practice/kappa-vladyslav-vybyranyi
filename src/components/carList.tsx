@@ -45,6 +45,7 @@ export default function CarList({ cars, deleteCar, editCar } : CarListProps) {
                                         <Typography><b>Maker: </b>{car.maker}</Typography>
                                         <Typography><b>Model: </b> {car.model}</Typography>
                                         <Typography><b>Year: </b> {car.year}</Typography>
+                                        <Typography><b>Engine: </b> {car.engine}</Typography>
                                     </Container>
                                     <ButtonGroup orientation='vertical'>
                                         <Button variant='outlined' color='warning' onClick={() => {handleEdit(i)}}><EditIcon /></Button>

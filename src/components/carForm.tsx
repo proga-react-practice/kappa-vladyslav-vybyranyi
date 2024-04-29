@@ -3,7 +3,7 @@ import { Car, FormErrors, emptyCar } from '../types'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import TextField from '@mui/material/TextField';
-import { Button, ButtonGroup, MenuItem, Typography } from '@mui/material';
+import { Button, ButtonGroup, FormControl, FormControlLabel, FormHelperText, FormLabel, MenuItem, Radio, RadioGroup, Typography } from '@mui/material';
 
 import { validateCar } from '../utils'
 
@@ -34,12 +34,12 @@ export default function CarForm({ addCar } : CarFormProps){
 
     const handleReset = () => { // Handler for form reset
         setCar(emptyCar)
-        setErrors({ model: '', year: '', maker: ''})
+        setErrors(emptyCar)
     }
 
     
     return (
-        <Card>
+        <Card sx={{overflowY: "auto", scrollbarColor: (theme) => `${theme.palette.primary.main} ${theme.palette.background.default}`}}>
             <CardContent sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <Typography variant='h4' sx={{margin: 1}}>Add Car</Typography>
             
@@ -81,6 +81,21 @@ export default function CarForm({ addCar } : CarFormProps){
                         <MenuItem value="Honda">Honda</MenuItem>
                         <MenuItem value="Ford">Ford</MenuItem>
                 </TextField>
+                <FormControl required component="fieldset" error={Boolean(errors.engine)}>
+                    <FormLabel component="legend">Engine Type</FormLabel>
+                    <RadioGroup 
+                        row
+                        aria-label="engine" 
+                        name="engine" 
+                        value={car.engine} 
+                        onChange={handleChange}>
+                        <FormControlLabel value="Petrol" control={<Radio />} label="Petrol" />
+                        <FormControlLabel value="Diesel" control={<Radio />} label="Diesel" />
+                        <FormControlLabel value="Electric" control={<Radio />} label="Electric" />
+                    </RadioGroup>
+                    <FormHelperText>{errors.engine}</FormHelperText>
+                </FormControl>
+
                 <ButtonGroup sx={{margin: 1}}>
                     <Button variant='outlined' onClick={handleReset}>Clear</Button>
                     <Button variant='contained' onClick={handleSubmit}>Add Car</Button>
