@@ -42,9 +42,9 @@ function App() {
 	return (
 		<ThemeProvider theme={themes[themeIndex].theme} >
 			<Box 
-				sx={{height: '100vh', width: '100vw', alignContent: 'center', bgcolor: 'background.default'}}
+				sx={{height: '100vh', width: '100vw', alignContent: 'center', justifyContent: "center", bgcolor: 'background.default'}}
 				className='cars-container'>
-					<Container sx={{display: 'flex', justifyContent: 'center'}}>
+					<Container sx={{display: 'flex', maxHeight: '80vh', flexDirection: {xs: "column", md: "row"}, justifyContent: 'center', alignItems: "center"}}>
 						<CarForm addCar={addCar} />
 						{cars.length !== 0 && <Divider orientation='vertical' flexItem variant='middle' sx={{m: 2}} />}
 						<Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'end'}}>

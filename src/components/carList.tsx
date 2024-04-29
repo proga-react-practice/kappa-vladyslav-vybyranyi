@@ -33,7 +33,7 @@ export default function CarList({ cars, deleteCar, editCar } : CarListProps) {
     return (
         <List sx={{ overflowY: 'auto', 
                     overflowX: 'hidden', 
-                    height: 400,
+                    maxHeight: {xs: 200, md: 400},
                     scrollbarColor: (theme) => `${theme.palette.primary.main} ${theme.palette.background.default}`}}>
             {cars.map((car, i) => (
                 <ListItem key={i}>
