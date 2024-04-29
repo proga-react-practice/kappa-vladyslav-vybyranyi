@@ -1,9 +1,105 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+interface Entry {
+    str: string,
+    index: number,
+}
+
+interface Diff {
+    added: Entry[],
+    removed: Entry[],
+}
+
+function sumEntries(entries: Entry[]): Entry[] {
+    const result: Entry[] = []
+    entries = entries.sort((a, b) => a.index - b.index)
+    let offset = 1
+    for (let i = 0; i < entries.length; i++){
+        if (result.length === 0){
+            result.push(entries[i])
+            offset = 1
+        } else if (entries[i].index === result[result.length - 1].index + offset){
+            result[result.length - 1].str += entries[i].str
+            offset++
+        } else {
+            result.push(entries[i])
+            offset = 1
+        }
+    }
+    return result
+}
+
+function calculateDiff( a: string, b: string ) : Diff {
+    console.log('a', a)
+    console.log('b', b)
+    const result : Diff = {added: [], removed: []}
+    const dp : number[][] = []
+    for (let i = 0; i <= a.length; i++){
+        dp.push([])
+        for (let j = 0; j <= b.length; j++){
+            dp[i].push(0)
+        }
+    }
+    for (let i = 1; i <= a.length; i++){
+        for (let j = 1; j <= b.length; j++){
+            if (a[i - 1] === b[j - 1]){
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            } else {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1])
+            }
+        }
+    }
+    let i = a.length
+    let j = b.length
+    while (i > 0 || j > 0){
+        if (i === 0){
+            result.added.push({str: b[j - 1], index: j - 1})
+            j--
+        } else if (j === 0){
+            result.removed.push({str: a[i - 1], index: i - 1})
+            i--
+        } else if (a[i - 1] === b[j - 1]){
+            i--
+            j--
+        } else if (dp[i - 1][j] > dp[i][j - 1]){
+            result.removed.push({str: a[i - 1], index: i - 1})
+            i--
+        } else {
+            result.added.push({str: b[j - 1], index: j - 1})
+            j--
+        }
+    }
+    result.added = sumEntries(result.added)
+    result.removed = sumEntries(result.removed)
+    return result
+}
+
+function applyDiff( str: string, diff: Diff ) : string {
+    let result = ''
+    let offset = 0
+    diff.removed = diff.removed.sort( (a, b) => a.index - b.index)
+    diff.added = diff.added.sort( (a, b) => a.index - b.index)
+    for (let i = 0; i < diff.removed.length; i++){
+        if(str[diff.removed[i].index] !== diff.removed[i].str) console.log('index error')
+        result += str.slice(offset, diff.removed[i].index)
+        offset = diff.removed[i].index+diff.removed[i].str.length
+    }
+    console.log('str', str)
+    console.log('result', result)
+    console.log('diff', diff)
+    result += str.slice(offset)
+    offset = 0
+    for (let i = 0; i < diff.added.length; i++){
+        result = result.slice(0, diff.added[i].index + offset) + diff.added[i].str + result.slice(diff.added[i].index + offset)
+    }
+    return result
+}
 
 // Hook for version control variable
 export default function VCV<T>(value : T){
     const [state, setState] = useState<T>(value)
     const [history, setHistory] = useState<T[]>([value])
+    const [diffs, setDiffs] = useState<Diff[]>([])
     const [index, setIndex] = useState(0)
 
     function revertTo(index : number){
@@ -24,11 +120,38 @@ export default function VCV<T>(value : T){
         setState(history[index + 1])
     }
 
+    useEffect(() => {
+        console.log('history', history)
+    }, [history])
+
+    useEffect(() => {
+        
+        console.log('index', index)
+        const temp_history = history.slice(0, index+1)
+        console.log('temp_history1', temp_history)
+        const temp_diffs = diffs.slice(index-1)
+        console.log('temp_diffs', temp_diffs)
+        temp_diffs.forEach((diff) => {
+            temp_history.push(JSON.parse(applyDiff(JSON.stringify(temp_history[temp_history.length - 1]), diff)) as T)
+            console.log('temp_history2', temp_history)
+        })
+
+        setHistory(temp_history)
+
+        // setHistory([...history.slice(0, index + 1), ...diffs.slice(index-1).map((diff, i) => {
+        //     console.log('test', applyDiff(JSON.stringify(history[index-1]), sumDiffs(diffs.slice(index-1, index+i))))
+        //     return JSON.parse(applyDiff(JSON.stringify(history[index-1]), sumDiffs(diffs.slice(index-1, index+i)))) as T
+        // })])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [diffs] )
+
     function setValue(value : T){
         if (index !== history.length - 1){
+            setDiffs(diffs.slice(0, index + 1))
             setHistory(history.slice(0, index + 1))
         }
-        setHistory([...history.slice(0, index + 1), value, ...history.slice(index + 1)])
+        setDiffs([...diffs.splice(0, index + 1), calculateDiff(JSON.stringify(history[index]), JSON.stringify(value)), ...diffs.slice(index + 1)])
+        
         setIndex(index + 1)
         setState(value)
     }
