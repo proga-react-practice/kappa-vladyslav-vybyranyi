@@ -1,6 +1,6 @@
 import { Car } from '../types';
 import { useState } from 'react';
-import { Button, Dialog, DialogContent, DialogTitle, Typography } from '@mui/material'
+import { Button, Dialog, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material'
 import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import Timeline from '@mui/lab/Timeline';
@@ -25,7 +25,7 @@ export default function CarHistory({history, revertTo, currentIndex} : CarHistor
     
     return (
         <>
-            {history.length > 1 && <Button onClick={() => setOpen(true)}><AccountTreeIcon/></Button>}
+            {history.length > 1 && <IconButton color='primary' onClick={() => setOpen(true)}><AccountTreeIcon/></IconButton>}
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Commits History</DialogTitle>
                 <DialogContent>

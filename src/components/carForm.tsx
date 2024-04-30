@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { Car, FormErrors, emptyCar } from '../types'
+import { Car, FormErrors, emptyCar, engineTypes } from '../types'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import TextField from '@mui/material/TextField';
@@ -8,6 +8,66 @@ import { Button, ButtonGroup, FormControl, FormControlLabel, FormHelperText, For
 import { validateCar } from '../utils'
 
 interface CarFormProps { addCar: (car: Car) => void }
+
+interface FormFieldsProps {
+    car: Car,
+    handleChange: (e: ChangeEvent<HTMLInputElement>) => void,
+    errors: FormErrors
+}
+
+export function FormFields({ car, handleChange, errors } : FormFieldsProps) {
+    return (
+        <>
+            <TextField
+                sx={{marginY: 1}}
+                label='Maker'
+                name='maker'
+                select
+                value={car.maker}
+                onChange={handleChange}
+                error={errors.maker !== ''}
+                helperText={errors.maker}
+                fullWidth>
+                    <MenuItem value="">Select Maker</MenuItem>
+                    <MenuItem value="Toyota">Toyota</MenuItem>
+                    <MenuItem value="Honda">Honda</MenuItem>
+                    <MenuItem value="Ford">Ford</MenuItem>
+            </TextField>
+            <TextField
+                sx={{marginY: 1}}
+                label='Model'
+                name='model'
+                value={car.model}
+                onChange={handleChange}
+                error={errors.model !== ''}
+                helperText={errors.model}
+                fullWidth
+            />
+            <TextField
+                sx={{marginY: 1}}
+                label='Year'
+                name='year'
+                value={car.year}
+                onChange={handleChange}
+                error={errors.year !== ''}
+                helperText={errors.year}
+                fullWidth
+            />
+            <FormControl required component="fieldset" error={Boolean(errors.engine)}>
+                <FormLabel component="legend">Engine Type</FormLabel>
+                <RadioGroup 
+                    row
+                    aria-label="engine" 
+                    name="engine" 
+                    value={car.engine} 
+                    onChange={handleChange}>
+                    {engineTypes.map((engine) => (<FormControlLabel value={engine} control={<Radio />} label={engine} />))}
+                </RadioGroup>
+                <FormHelperText>{errors.engine}</FormHelperText>
+            </FormControl>
+        </>
+    )
+}
 
 export default function CarForm({ addCar } : CarFormProps){
     const [car, setCar] = useState(emptyCar) // Car object state
@@ -43,58 +103,7 @@ export default function CarForm({ addCar } : CarFormProps){
             <CardContent sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <Typography variant='h4' sx={{margin: 1}}>Add Car</Typography>
             
-                <TextField
-                    sx={{margin: 1, width: '100%'}}
-                    required
-                    type="outlined"
-                    name='model'
-                    value={car.model}
-                    onChange={handleChange}
-                    label="Model"
-                    error={Boolean(errors.model)}
-                    helperText={errors.model}
-                />
-                <TextField
-                    sx={{margin: 1, width: '100%'}}
-                    required
-                    type="outlined"
-                    name='year'
-                    value={car.year}
-                    onChange={handleChange}
-                    label="Year"
-                    error={Boolean(errors.year)}
-                    helperText={errors.year}
-                />
-                <TextField 
-                    sx={{ width: '100%', margin: 1}} 
-                    label="Maker" 
-                    name='maker' 
-                    select 
-                    required
-                    defaultValue=""
-                    value={car.maker} 
-                    error={Boolean(errors.maker)}
-                    helperText={errors.maker}
-                    onChange={handleChange} >
-                        <MenuItem value="">Select Maker</MenuItem>
-                        <MenuItem value="Toyota">Toyota</MenuItem>
-                        <MenuItem value="Honda">Honda</MenuItem>
-                        <MenuItem value="Ford">Ford</MenuItem>
-                </TextField>
-                <FormControl required component="fieldset" error={Boolean(errors.engine)}>
-                    <FormLabel component="legend">Engine Type</FormLabel>
-                    <RadioGroup 
-                        row
-                        aria-label="engine" 
-                        name="engine" 
-                        value={car.engine} 
-                        onChange={handleChange}>
-                        <FormControlLabel value="Petrol" control={<Radio />} label="Petrol" />
-                        <FormControlLabel value="Diesel" control={<Radio />} label="Diesel" />
-                        <FormControlLabel value="Electric" control={<Radio />} label="Electric" />
-                    </RadioGroup>
-                    <FormHelperText>{errors.engine}</FormHelperText>
-                </FormControl>
+                <FormFields car={car} handleChange={handleChange} errors={errors} />
 
                 <ButtonGroup sx={{margin: 1}}>
                     <Button variant='outlined' onClick={handleReset}>Clear</Button>

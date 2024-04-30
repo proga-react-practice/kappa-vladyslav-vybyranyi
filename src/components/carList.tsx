@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Container, Box, List, ListItem, Slide, Typography, ButtonGroup } from '@mui/material'
+import { Card, CardContent, Container, Box, List, ListItem, Slide, Typography, ButtonGroup, IconButton } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Car } from '../types'
@@ -48,8 +48,8 @@ export default function CarList({ cars, deleteCar, editCar } : CarListProps) {
                                         <Typography><b>Engine: </b> {car.engine}</Typography>
                                     </Container>
                                     <ButtonGroup orientation='vertical'>
-                                        <Button variant='outlined' color='warning' onClick={() => {handleEdit(i)}}><EditIcon /></Button>
-                                        <Button variant='outlined' color='error' onClick={() => {handleDelete(i)}}><DeleteIcon /></Button>
+                                        <IconButton color='warning' onClick={() => {handleEdit(i)}}><EditIcon /></IconButton>
+                                        <IconButton color='error' onClick={() => {handleDelete(i)}}><DeleteIcon /></IconButton>
                                     </ButtonGroup>
                                 </Box>
                             </CardContent>

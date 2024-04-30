@@ -1,14 +1,15 @@
 
-import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, MenuItem, FormControl, FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button} from '@mui/material';
 import { ChangeEvent, useState, useEffect } from 'react';
 import { Car, FormErrors, emptyCar } from '../types';
 import { validateCar } from '../utils';
+import { FormFields } from './carForm';
 
 interface CarEditDialogProps {
     open: boolean,
     handleClose: () => void,
     editCar: (car: Car) => void,
-    carData: Car
+    carData: Car | undefined
 }
 
 export default function CarEditDialog({open, handleClose, editCar, carData} : CarEditDialogProps){
@@ -42,55 +43,7 @@ export default function CarEditDialog({open, handleClose, editCar, carData} : Ca
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Edit Car</DialogTitle>
             <DialogContent>
-                <TextField
-                    sx={{marginY: 1}}
-                    label='Maker'
-                    name='maker'
-                    select
-                    value={car.maker}
-                    onChange={handleChange}
-                    error={errors.maker !== ''}
-                    helperText={errors.maker}
-                    fullWidth>
-                        <MenuItem value="">Select Maker</MenuItem>
-                        <MenuItem value="Toyota">Toyota</MenuItem>
-                        <MenuItem value="Honda">Honda</MenuItem>
-                        <MenuItem value="Ford">Ford</MenuItem>
-                </TextField>
-                <TextField
-                    sx={{marginY: 1}}
-                    label='Model'
-                    name='model'
-                    value={car.model}
-                    onChange={handleChange}
-                    error={errors.model !== ''}
-                    helperText={errors.model}
-                    fullWidth
-                />
-                <TextField
-                    sx={{marginY: 1}}
-                    label='Year'
-                    name='year'
-                    value={car.year}
-                    onChange={handleChange}
-                    error={errors.year !== ''}
-                    helperText={errors.year}
-                    fullWidth
-                />
-                <FormControl required component="fieldset" error={Boolean(errors.engine)}>
-                    <FormLabel component="legend">Engine Type</FormLabel>
-                    <RadioGroup 
-                        row
-                        aria-label="engine" 
-                        name="engine" 
-                        value={car.engine} 
-                        onChange={handleChange}>
-                        <FormControlLabel value="Petrol" control={<Radio />} label="Petrol" />
-                        <FormControlLabel value="Diesel" control={<Radio />} label="Diesel" />
-                        <FormControlLabel value="Electric" control={<Radio />} label="Electric" />
-                    </RadioGroup>
-                    <FormHelperText>{errors.engine}</FormHelperText>
-                </FormControl>
+                <FormFields car={car} errors={errors} handleChange={handleChange} />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>

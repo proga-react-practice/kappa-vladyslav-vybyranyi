@@ -5,19 +5,19 @@ import VCV from '../lib/vcv'
 import CarList from './components/carList'
 import CarEditDialog from './components/carEditDialog'
 import CarHistory from './components/carsHistory'
-import { Box, Button, Container, Divider, ThemeProvider} from '@mui/material'
+import { Box, Container, Divider, IconButton, ThemeProvider} from '@mui/material'
 
 import themes from './themes'
 
 function App() {
 	const { state : cars, 
-					setValue : setCars, 
-					revertTo : revertCommit, 
-					history : commitHistory,
-					index: commitIndex } = VCV<Car[]>([]) // Car array state
+			setValue : setCars, 
+			revertTo : revertCommit, 
+			history : commitHistory,
+			index: commitIndex } = VCV<Car[]>([]) // Car array state
 	const [themeIndex, setThemeIndex] = useState(0)
 	const [editDialogOpen, setEditDialogOpen] = useState(false)
-	const [editIndex, setEditIndex] = useState(-1)
+	const [editIndex, setEditIndex] = useState<number | null>(null)
 
 	function changeTheme() {
 		setThemeIndex((themeIndex + 1) % themes.length)
@@ -31,7 +31,8 @@ function App() {
 		setCars(cars.filter((_, index) => index !== i))
 	}
 	
-	function editCar(i: number, car: Car) { // Function to edit a car from the list
+	function editCar(i: number | null, car: Car) { // Function to edit a car from the list
+		if (i === null) return
 		setCars(cars.map((c, index) => index === i ? car : c))
 	}
 
@@ -56,12 +57,12 @@ function App() {
 							<CarList cars={cars} deleteCar={deleteCar} editCar={handleEdit} />
 						</Box>
 					</Container>
-					<Button sx={{position: 'absolute', top: 5, right: 5}} onClick={changeTheme} variant='text'>{themes[themeIndex].icon}</Button>
+					<IconButton sx={{color: 'primary.main', position: 'absolute', top: 5, right: 5}} onClick={changeTheme}>{themes[themeIndex].icon}</IconButton>
 					<CarEditDialog 
 						open={editDialogOpen} 
 						handleClose={() => setEditDialogOpen(false)} 
 						editCar={(car) => editCar(editIndex, car)}
-						carData={cars[editIndex]}
+						carData={editIndex !== null ? cars[editIndex] : undefined}
 					/>
 			</Box>
 		</ThemeProvider>

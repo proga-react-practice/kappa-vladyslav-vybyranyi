@@ -30,8 +30,6 @@ function sumEntries(entries: Entry[]): Entry[] {
 }
 
 function calculateDiff( a: string, b: string ) : Diff {
-    console.log('a', a)
-    console.log('b', b)
     const result : Diff = {added: [], removed: []}
     const dp : number[][] = []
     for (let i = 0; i <= a.length; i++){
@@ -80,7 +78,6 @@ function applyDiff( str: string, diff: Diff ) : string {
     diff.removed = diff.removed.sort( (a, b) => a.index - b.index)
     diff.added = diff.added.sort( (a, b) => a.index - b.index)
     for (let i = 0; i < diff.removed.length; i++){
-        if(str[diff.removed[i].index] !== diff.removed[i].str) console.log('index error')
         result += str.slice(offset, diff.removed[i].index)
         offset = diff.removed[i].index+diff.removed[i].str.length
     }
@@ -123,20 +120,13 @@ export default function VCV<T>(value : T){
     }, [history])
 
     useEffect(() => {
-        console.log('diffs', diffs)
         const temp_history = history.slice(0, index !== 0 ? index : 1)
-        console.log('temp_history', temp_history)
         const temp_diffs = diffs.slice(index-1)
         temp_diffs.forEach((diff) => {
             temp_history.push(JSON.parse(applyDiff(JSON.stringify(temp_history[temp_history.length - 1]), diff)) as T)
         })
 
         setHistory(temp_history)
-
-        // setHistory([...history.slice(0, index + 1), ...diffs.slice(index-1).map((diff, i) => {
-        //     console.log('test', applyDiff(JSON.stringify(history[index-1]), sumDiffs(diffs.slice(index-1, index+i))))
-        //     return JSON.parse(applyDiff(JSON.stringify(history[index-1]), sumDiffs(diffs.slice(index-1, index+i)))) as T
-        // })])
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [diffs] )
 
@@ -145,7 +135,6 @@ export default function VCV<T>(value : T){
         //     setDiffs(diffs.slice(0, index + 1))
         //     setHistory(history.slice(0, index + 1))
         // }
-        console.log('index', index)
         if (index === 0){
             setDiffs([calculateDiff(JSON.stringify(history[index]), JSON.stringify(value)), ...diffs.slice(index)])
         }else if (index === history.length - 1){
