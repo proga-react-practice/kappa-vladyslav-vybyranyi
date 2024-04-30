@@ -1,90 +1,115 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
-import { Car } from '../types'
-import './carForm.css'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import { Car, FormErrors, emptyCar, engineTypes } from '../types'
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
+import { Button, ButtonGroup, FormControl, FormControlLabel, FormHelperText, FormLabel, MenuItem, Radio, RadioGroup, Typography } from '@mui/material';
 
-interface CarFormProps { cars: Car[], setCars: (cars: Car[]) => void }
-interface FormErrors extends Car {}
+import { validateCar } from '../utils'
 
-function capitalizeFirstLetter(string: string) { // Function to capitalize the first letter of a string
-    return string.charAt(0).toUpperCase() + string.slice(1)
+interface CarFormProps { addCar: (car: Car) => void }
+
+interface FormFieldsProps {
+    car: Car,
+    handleChange: (e: ChangeEvent<HTMLInputElement>) => void,
+    errors: FormErrors
 }
 
-export default function CarForm({ cars, setCars} : CarFormProps){
-    const [car, setCar] = useState({ maker: '', model: '', year: '' }) // Car object state
-    const [errors, setErrors] = useState<FormErrors>({
-        model: '', year: '', maker: ''
-    }) // Errors state
+export function FormFields({ car, handleChange, errors } : FormFieldsProps) {
+    return (
+        <>
+            <TextField
+                sx={{marginY: 1}}
+                label='Maker'
+                name='maker'
+                select
+                value={car.maker}
+                onChange={handleChange}
+                error={errors.maker !== ''}
+                helperText={errors.maker}
+                fullWidth>
+                    <MenuItem value="">Select Maker</MenuItem>
+                    <MenuItem value="Toyota">Toyota</MenuItem>
+                    <MenuItem value="Honda">Honda</MenuItem>
+                    <MenuItem value="Ford">Ford</MenuItem>
+            </TextField>
+            <TextField
+                sx={{marginY: 1}}
+                label='Model'
+                name='model'
+                value={car.model}
+                onChange={handleChange}
+                error={errors.model !== ''}
+                helperText={errors.model}
+                fullWidth
+            />
+            <TextField
+                sx={{marginY: 1}}
+                label='Year'
+                name='year'
+                value={car.year}
+                onChange={handleChange}
+                error={errors.year !== ''}
+                helperText={errors.year}
+                fullWidth
+            />
+            <FormControl required component="fieldset" error={Boolean(errors.engine)}>
+                <FormLabel component="legend">Engine Type</FormLabel>
+                <RadioGroup 
+                    row
+                    aria-label="engine" 
+                    name="engine" 
+                    value={car.engine} 
+                    onChange={handleChange}>
+                    {engineTypes.map((engine) => (<FormControlLabel value={engine} control={<Radio />} label={engine} />))}
+                </RadioGroup>
+                <FormHelperText>{errors.engine}</FormHelperText>
+            </FormControl>
+        </>
+    )
+}
 
-    const validate = () => { // Function to validate form fields
-        let correct = true
-        Object.keys(errors).forEach((key) => {
-            if (!car[key as keyof Car]) {
-                errors[key as keyof Car] = `${capitalizeFirstLetter(key)} is required`
-                correct = false
-            } else {
-                errors[key as keyof Car] = ''
-            }
-        })
-        setErrors({ ...errors })
-        return correct
-    }
+export default function CarForm({ addCar } : CarFormProps){
+    const [car, setCar] = useState(emptyCar) // Car object state
+    const [errors, setErrors] = useState<FormErrors>(emptyCar) // Errors state
+
+    useEffect(() => { // Effect to re-validate form fields
+        if (Object.values(errors).some((value) => value !== '')){
+            validateCar({car, errors, setErrors})
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [car])
     
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => { // Handler for input changes
-        const { name, value } = e.target
-        setCar({ ...car, [name]: value })
-    }
-
-    const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => { // Handler for select changes
         const { name, value } = e.target
         setCar({ ...car, [name]: value })
     }
     
     const handleSubmit = (e: FormEvent) => { // Handler for form submission
         e.preventDefault()
-        if (!validate()) return
-        setCars([...cars, car])
-        setCar({ maker: '', model: '', year: '' })
+        if (!validateCar({car, errors, setErrors})) return
+        addCar(car)
+        setCar(emptyCar)
     }
 
     const handleReset = () => { // Handler for form reset
-        setCar({ maker: '', model: '', year: '' })
-        setErrors({ model: '', year: '', maker: ''})
+        setCar(emptyCar)
+        setErrors(emptyCar)
     }
 
     
     return (
-        <form className='car-form' onReset={handleReset} onSubmit={handleSubmit}>
+        <Card sx={{overflowY: "auto", scrollbarColor: (theme) => `${theme.palette.primary.main} ${theme.palette.background.default}`}}>
+            <CardContent sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <Typography variant='h4' sx={{margin: 1}}>Add Car</Typography>
             
-            <input
-                type="text"
-                name="model"
-                value={car.model}
-                onChange={handleChange}
-                placeholder="Model"
-            />
-            <p className='error'>{errors.model}</p>
-            <input
-                type="number"
-                min={1900}
-                max={2024}
-                minLength={4}
-                maxLength={4}
-                name="year"
-                defaultValue={2000}
-                value={car.year}
-                onChange={handleChange}
-                placeholder="Year"
-            />
-            <p className='error'>{errors.year}</p>
-            <select name="maker" value={car.maker} onChange={handleSelectChange}>
-                <option value="">Select Maker</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Honda">Honda</option>
-                <option value="Ford">Ford</option>
-            </select>
-            <p className='error'>{errors.maker}</p>
-            <button type="reset">Clear</button>
-            <button type="submit">Add Car</button>
-        </form>
+                <FormFields car={car} handleChange={handleChange} errors={errors} />
+
+                <ButtonGroup sx={{margin: 1}}>
+                    <Button variant='outlined' onClick={handleReset}>Clear</Button>
+                    <Button variant='contained' onClick={handleSubmit}>Add Car</Button>
+                </ButtonGroup>
+            </CardContent>
+        </Card>
     )
 }
